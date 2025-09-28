@@ -1492,267 +1492,7 @@ function CFAHub:CreateWindow(title, gameName, intro)
                 end);
 
             end -- Final
-
-            function Elements:CreateDropdown(droptitle, setting, callback)
-                local DropElements = {}
-                droptitle = droptitle or "Dropdown"
-                
-                local list = setting.List or {}
-                local search = setting.Search
-                local default = setting.Default
-
-                callback = callback or function() end
-
-                local opened = false
-
-                local TextLabel = Instance.new("TextLabel")
-                local DropButton = Instance.new("TextButton")
-                local DropSearch = Instance.new("TextBox")
-                local Dropdown = Instance.new("Frame")
-                local DropdownCorner = Instance.new("UICorner")
-                local DropdownListLayout = Instance.new("UIListLayout")
-                local TopFrame = Instance.new("Frame")
-                local ArrowIcon = Instance.new("ImageLabel")
-                local TopFrameCorner = Instance.new("UICorner")
-                local DropItemHolder = Instance.new("ScrollingFrame")
-                local DropItemListLayout = Instance.new("UIListLayout")
-                
-                Dropdown.Name = "Dropdown"
-                Dropdown.Parent = SectionFrame
-                Dropdown.BackgroundColor3 = themes.Drop
-                Objects[Dropdown] = "Drop"
-                Dropdown.ClipsDescendants = true
-                Dropdown.Position = UDim2.new(0.0319148935, 0, 0.186978295, 0)
-                Dropdown.Size = Scale(UDim2.new(0, 440, 0, 34))
-                Dropdown.ZIndex = 2
-                
-                DropdownCorner.CornerRadius = UDim.new(0, Scale(4))
-                DropdownCorner.Name = "DropdownCorner"
-                DropdownCorner.Parent = Dropdown
-                
-                DropdownListLayout.Name = "DropdownListLayout"
-                DropdownListLayout.Parent = Dropdown
-                DropdownListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-                DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                DropdownListLayout.Padding = UDim.new(0, Scale(5))
-                
-                TopFrame.Name = "TopFrame"
-                TopFrame.Parent = Dropdown
-                TopFrame.BackgroundColor3 = themes.Background
-                Objects[TopFrame] = "Background"
-                TopFrame.Size = Scale(UDim2.new(0, 440, 0, 34))
-                TopFrame.ZIndex = 2
-                
-                ArrowIcon.Name = "ArrowIcon"
-                ArrowIcon.Parent = TopFrame
-                ArrowIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                ArrowIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ArrowIcon.BackgroundTransparency = 1.000
-                ArrowIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
-                ArrowIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
-                ArrowIcon.ZIndex = 2
-                ArrowIcon.Image = "rbxassetid://7072706663"
-                ArrowIcon.ImageColor3 = themes.TextColor
-                Objects[ArrowIcon] = "TextColor"
-                
-                TopFrameCorner.CornerRadius = UDim.new(0, Scale(4))
-                TopFrameCorner.Name = "TopFrameCorner"
-                TopFrameCorner.Parent = TopFrame
-                
-                if search == true then
-                    DropSearch.Name = "DropSearch"
-                    DropSearch.Parent = TopFrame
-                    DropSearch.AnchorPoint = Vector2.new(1, 0)
-                    DropSearch.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    DropSearch.BackgroundTransparency = 1.000
-                    DropSearch.Position = UDim2.new(0.899999976, 0, 0, 0)
-                    DropSearch.Size = Scale(UDim2.new(0, 389, 0, 34))
-                    DropSearch.ZIndex = 2
-                    DropSearch.Font = Enum.Font.SourceSansSemibold
-                    DropSearch.Text = droptitle .. ":"
-                    DropSearch.TextColor3 = themes.TextColor
-                    Objects[DropSearch] = "TextColor"
-                    DropSearch.TextSize = ScaleText(22)
-                    DropSearch.TextXAlignment = Enum.TextXAlignment.Left
-                else
-                    TextLabel.Parent = TopFrame
-                    TextLabel.AnchorPoint = Vector2.new(1, 0)
-                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    TextLabel.BackgroundTransparency = 1.000
-                    TextLabel.Position = UDim2.new(0.899999976, 0, 0, 0)
-                    TextLabel.Size = Scale(UDim2.new(0, 389, 0, 34))
-                    TextLabel.Font = Enum.Font.SourceSansSemibold
-                    TextLabel.Text = droptitle .. ":"
-                    TextLabel.TextColor3 = themes.TextColor
-                    Objects[TextLabel] = "TextColor"
-                    TextLabel.TextSize = ScaleText(22)
-                    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-                    
-                    DropButton.Name = "DropButton"
-                    DropButton.Parent = TopFrame
-                    DropButton.Active = false
-                    DropButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    DropButton.BackgroundTransparency = 1.000
-                    DropButton.Size = UDim2.new(1, 0, 0, Scale(34))
-                    DropButton.ZIndex = 2
-                    DropButton.AutoButtonColor = false
-                    DropButton.Font = Enum.Font.SourceSansSemibold
-                    DropButton.Text = ""
-                    DropButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    DropButton.TextSize = ScaleText(22)
-                    DropButton.TextWrapped = true
-                    DropButton.TextXAlignment = Enum.TextXAlignment.Left
-                end
-
-                DropItemHolder.Name = "DropItemHolder"
-                DropItemHolder.Parent = Dropdown
-                DropItemHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                DropItemHolder.BackgroundTransparency = 1.000
-                DropItemHolder.BorderSizePixel = 0
-                DropItemHolder.Position = UDim2.new(0, 0, 0.254901975, 0)
-                DropItemHolder.Size = UDim2.new(1, 0, 0.0130718956, Scale(100))
-                DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
-                DropItemHolder.ScrollBarThickness = Scale(6)
-                DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
-                Objects[DropItemHolder] = "ScrollBar"
-                
-                DropItemListLayout.Name = "DropItemListLayout"
-                DropItemListLayout.Parent = DropItemHolder
-                DropItemListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-                DropItemListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                DropItemListLayout.Padding = UDim.new(0, Scale(5))
-
-                coroutine.wrap(function()
-                    while wait() do
-                        Dropdown.BackgroundColor3 = themes.Drop
-                        ArrowIcon.ImageColor3 = themes.TextColor
-                        TopFrame.BackgroundColor3 = themes.Background
-                        TextLabel.TextColor3 = themes.TextColor
-                        DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
-                        if DropSearch then
-                            DropSearch.TextColor3 = themes.TextColor
-                        end
-                    end
-                end)()
-
-                if default then
-                    callback(default)
-                    TextLabel.Text = droptitle .. ": " .. default
-                elseif default and search then
-                    callback(default)
-                    DropSearch.Text = droptitle .. ": " .. default
-                end
-                
-                if not search then
-                    DropButton.MouseButton1Click:Connect(function()
-                        if opened then
-                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-                        else
-                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
-                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
-                        end
-                        opened = not opened
-                    end) 
-                else
-                    local function updateResult()
-                        local search = string.lower(DropSearch.Text)
-                        for i, v in pairs(DropItemHolder:GetChildren()) do
-                            if v:IsA("GuiButton") then
-                                if search ~= "" then
-                                    local item = string.lower(v.Text)
-                                    if string.find(item, search) then
-                                        v.Visible = true
-                                    else
-                                        v.Visible = false
-                                    end
-                                else
-                                    v.Visible = true
-                                end
-                            end
-                        end
-                    end
-
-                    local focused
-
-                    DropSearch.Focused:Connect(function()
-                        focused = true
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
-                    end)
-
-                    DropSearch.FocusLost:Connect(function()
-                        focused = false
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-
-                        if not tostring(DropSearch.Text) or not tonumber(DropSearch.Text) then
-                            DropSearch.Text = droptitle .. ":"
-                            for i, v in pairs(DropItemHolder:GetChildren()) do
-                                if v:IsA("GuiButton") then
-                                    v.Visible = true
-                                end
-                            end
-                        end
-                    end)
-
-                    DropSearch.Changed:Connect(function()
-                        if focused then
-                            updateResult()
-                        end
-                    end)  
-                end
-
-                DropItemListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    local absoluteSize = DropItemListLayout.AbsoluteContentSize
-                    DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, absoluteSize.Y)
-                end)
-
-                for i, v in next, list do
-                    local DropItem = Instance.new("TextButton")
-                    local DropItemCorner = Instance.new("UICorner")              
-
-                    DropItem.Name = v .. "_DropItem"
-                    DropItem.Parent = DropItemHolder
-                    DropItem.BackgroundColor3 = themes.Background
-                    Objects[DropItem] = "Background"
-                    DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
-                    DropItem.AutoButtonColor = false
-                    DropItem.Font = Enum.Font.SourceSansSemibold
-                    DropItem.Text = " " .. v
-                    DropItem.TextColor3 = themes.TextColor
-                    Objects[DropItem] = "TextColor"
-                    DropItem.TextSize = ScaleText(21)
-                    DropItem.TextXAlignment = Enum.TextXAlignment.Left
-                    DropItem.ZIndex = 2
-                
-                    DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
-                    DropItemCorner.Name = "ToggleCorner"
-                    DropItemCorner.Parent = DropItem
-
-                    coroutine.wrap(function()
-                        while wait() do
-                            DropItem.BackgroundColor3 = themes.Background
-                            DropItem.TextColor3 = themes.TextColor
-                        end
-                    end)()
-
-                    DropItem.MouseButton1Click:Connect(function()
-                        opened = false
-                        Utility:Pop(DropItem, 8)
-                        callback(v)
-
-                        if not search then
-                            TextLabel.Text = droptitle .. ": " .. v
-                        else
-                            DropSearch.Text = droptitle .. ": " .. v
-                        end
-
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-                    end)
-                end
-function Elements:CreateColorPicker(colorPickerTitle, preset, callback)
+			function Elements:CreateColorPicker(colorPickerTitle, preset, callback)
     colorPickerTitle = colorPickerTitle or "Color Picker"
     preset = preset or Color3.new(255, 255, 255)
     callback = callback or function() end
@@ -2254,6 +1994,266 @@ function Elements:CreateColorPicker(colorPickerTitle, preset, callback)
             end
         end)
 end -- Final
+            function Elements:CreateDropdown(droptitle, setting, callback)
+                local DropElements = {}
+                droptitle = droptitle or "Dropdown"
+                
+                local list = setting.List or {}
+                local search = setting.Search
+                local default = setting.Default
+
+                callback = callback or function() end
+
+                local opened = false
+
+                local TextLabel = Instance.new("TextLabel")
+                local DropButton = Instance.new("TextButton")
+                local DropSearch = Instance.new("TextBox")
+                local Dropdown = Instance.new("Frame")
+                local DropdownCorner = Instance.new("UICorner")
+                local DropdownListLayout = Instance.new("UIListLayout")
+                local TopFrame = Instance.new("Frame")
+                local ArrowIcon = Instance.new("ImageLabel")
+                local TopFrameCorner = Instance.new("UICorner")
+                local DropItemHolder = Instance.new("ScrollingFrame")
+                local DropItemListLayout = Instance.new("UIListLayout")
+                
+                Dropdown.Name = "Dropdown"
+                Dropdown.Parent = SectionFrame
+                Dropdown.BackgroundColor3 = themes.Drop
+                Objects[Dropdown] = "Drop"
+                Dropdown.ClipsDescendants = true
+                Dropdown.Position = UDim2.new(0.0319148935, 0, 0.186978295, 0)
+                Dropdown.Size = Scale(UDim2.new(0, 440, 0, 34))
+                Dropdown.ZIndex = 2
+                
+                DropdownCorner.CornerRadius = UDim.new(0, Scale(4))
+                DropdownCorner.Name = "DropdownCorner"
+                DropdownCorner.Parent = Dropdown
+                
+                DropdownListLayout.Name = "DropdownListLayout"
+                DropdownListLayout.Parent = Dropdown
+                DropdownListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                DropdownListLayout.Padding = UDim.new(0, Scale(5))
+                
+                TopFrame.Name = "TopFrame"
+                TopFrame.Parent = Dropdown
+                TopFrame.BackgroundColor3 = themes.Background
+                Objects[TopFrame] = "Background"
+                TopFrame.Size = Scale(UDim2.new(0, 440, 0, 34))
+                TopFrame.ZIndex = 2
+                
+                ArrowIcon.Name = "ArrowIcon"
+                ArrowIcon.Parent = TopFrame
+                ArrowIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                ArrowIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                ArrowIcon.BackgroundTransparency = 1.000
+                ArrowIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
+                ArrowIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
+                ArrowIcon.ZIndex = 2
+                ArrowIcon.Image = "rbxassetid://7072706663"
+                ArrowIcon.ImageColor3 = themes.TextColor
+                Objects[ArrowIcon] = "TextColor"
+                
+                TopFrameCorner.CornerRadius = UDim.new(0, Scale(4))
+                TopFrameCorner.Name = "TopFrameCorner"
+                TopFrameCorner.Parent = TopFrame
+                
+                if search == true then
+                    DropSearch.Name = "DropSearch"
+                    DropSearch.Parent = TopFrame
+                    DropSearch.AnchorPoint = Vector2.new(1, 0)
+                    DropSearch.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    DropSearch.BackgroundTransparency = 1.000
+                    DropSearch.Position = UDim2.new(0.899999976, 0, 0, 0)
+                    DropSearch.Size = Scale(UDim2.new(0, 389, 0, 34))
+                    DropSearch.ZIndex = 2
+                    DropSearch.Font = Enum.Font.SourceSansSemibold
+                    DropSearch.Text = droptitle .. ":"
+                    DropSearch.TextColor3 = themes.TextColor
+                    Objects[DropSearch] = "TextColor"
+                    DropSearch.TextSize = ScaleText(22)
+                    DropSearch.TextXAlignment = Enum.TextXAlignment.Left
+                else
+                    TextLabel.Parent = TopFrame
+                    TextLabel.AnchorPoint = Vector2.new(1, 0)
+                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    TextLabel.BackgroundTransparency = 1.000
+                    TextLabel.Position = UDim2.new(0.899999976, 0, 0, 0)
+                    TextLabel.Size = Scale(UDim2.new(0, 389, 0, 34))
+                    TextLabel.Font = Enum.Font.SourceSansSemibold
+                    TextLabel.Text = droptitle .. ":"
+                    TextLabel.TextColor3 = themes.TextColor
+                    Objects[TextLabel] = "TextColor"
+                    TextLabel.TextSize = ScaleText(22)
+                    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    
+                    DropButton.Name = "DropButton"
+                    DropButton.Parent = TopFrame
+                    DropButton.Active = false
+                    DropButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    DropButton.BackgroundTransparency = 1.000
+                    DropButton.Size = UDim2.new(1, 0, 0, Scale(34))
+                    DropButton.ZIndex = 2
+                    DropButton.AutoButtonColor = false
+                    DropButton.Font = Enum.Font.SourceSansSemibold
+                    DropButton.Text = ""
+                    DropButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    DropButton.TextSize = ScaleText(22)
+                    DropButton.TextWrapped = true
+                    DropButton.TextXAlignment = Enum.TextXAlignment.Left
+                end
+
+                DropItemHolder.Name = "DropItemHolder"
+                DropItemHolder.Parent = Dropdown
+                DropItemHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                DropItemHolder.BackgroundTransparency = 1.000
+                DropItemHolder.BorderSizePixel = 0
+                DropItemHolder.Position = UDim2.new(0, 0, 0.254901975, 0)
+                DropItemHolder.Size = UDim2.new(1, 0, 0.0130718956, Scale(100))
+                DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+                DropItemHolder.ScrollBarThickness = Scale(6)
+                DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
+                Objects[DropItemHolder] = "ScrollBar"
+                
+                DropItemListLayout.Name = "DropItemListLayout"
+                DropItemListLayout.Parent = DropItemHolder
+                DropItemListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                DropItemListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                DropItemListLayout.Padding = UDim.new(0, Scale(5))
+
+                coroutine.wrap(function()
+                    while wait() do
+                        Dropdown.BackgroundColor3 = themes.Drop
+                        ArrowIcon.ImageColor3 = themes.TextColor
+                        TopFrame.BackgroundColor3 = themes.Background
+                        TextLabel.TextColor3 = themes.TextColor
+                        DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
+                        if DropSearch then
+                            DropSearch.TextColor3 = themes.TextColor
+                        end
+                    end
+                end)()
+
+                if default then
+                    callback(default)
+                    TextLabel.Text = droptitle .. ": " .. default
+                elseif default and search then
+                    callback(default)
+                    DropSearch.Text = droptitle .. ": " .. default
+                end
+                
+                if not search then
+                    DropButton.MouseButton1Click:Connect(function()
+                        if opened then
+                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+                        else
+                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
+                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
+                        end
+                        opened = not opened
+                    end) 
+                else
+                    local function updateResult()
+                        local search = string.lower(DropSearch.Text)
+                        for i, v in pairs(DropItemHolder:GetChildren()) do
+                            if v:IsA("GuiButton") then
+                                if search ~= "" then
+                                    local item = string.lower(v.Text)
+                                    if string.find(item, search) then
+                                        v.Visible = true
+                                    else
+                                        v.Visible = false
+                                    end
+                                else
+                                    v.Visible = true
+                                end
+                            end
+                        end
+                    end
+
+                    local focused
+
+                    DropSearch.Focused:Connect(function()
+                        focused = true
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
+                    end)
+
+                    DropSearch.FocusLost:Connect(function()
+                        focused = false
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+
+                        if not tostring(DropSearch.Text) or not tonumber(DropSearch.Text) then
+                            DropSearch.Text = droptitle .. ":"
+                            for i, v in pairs(DropItemHolder:GetChildren()) do
+                                if v:IsA("GuiButton") then
+                                    v.Visible = true
+                                end
+                            end
+                        end
+                    end)
+
+                    DropSearch.Changed:Connect(function()
+                        if focused then
+                            updateResult()
+                        end
+                    end)  
+                end
+
+                DropItemListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    local absoluteSize = DropItemListLayout.AbsoluteContentSize
+                    DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, absoluteSize.Y)
+                end)
+
+                for i, v in next, list do
+                    local DropItem = Instance.new("TextButton")
+                    local DropItemCorner = Instance.new("UICorner")              
+
+                    DropItem.Name = v .. "_DropItem"
+                    DropItem.Parent = DropItemHolder
+                    DropItem.BackgroundColor3 = themes.Background
+                    Objects[DropItem] = "Background"
+                    DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
+                    DropItem.AutoButtonColor = false
+                    DropItem.Font = Enum.Font.SourceSansSemibold
+                    DropItem.Text = " " .. v
+                    DropItem.TextColor3 = themes.TextColor
+                    Objects[DropItem] = "TextColor"
+                    DropItem.TextSize = ScaleText(21)
+                    DropItem.TextXAlignment = Enum.TextXAlignment.Left
+                    DropItem.ZIndex = 2
+                
+                    DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
+                    DropItemCorner.Name = "ToggleCorner"
+                    DropItemCorner.Parent = DropItem
+
+                    coroutine.wrap(function()
+                        while wait() do
+                            DropItem.BackgroundColor3 = themes.Background
+                            DropItem.TextColor3 = themes.TextColor
+                        end
+                    end)()
+
+                    DropItem.MouseButton1Click:Connect(function()
+                        opened = false
+                        Utility:Pop(DropItem, 8)
+                        callback(v)
+
+                        if not search then
+                            TextLabel.Text = droptitle .. ": " .. v
+                        else
+                            DropSearch.Text = droptitle .. ": " .. v
+                        end
+
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+                    end)
+                end
+
                 function DropElements:Add(newlist)
                     newlist = newlist or {}
 
