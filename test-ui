@@ -1,594 +1,4 @@
-function Elements:CreateSlider(slidertitle, setting, callback)
-                slidertitle = slidertitle or "Slider"
-                callback = callback or function() end
-                local Max_Value = setting.Max or 100
-                local Min_Value = setting.Min or 0
-                local DefaultValue = setting.DefaultValue or 0
-
-                local dragging = false
-
-                local Slider = Instance.new("Frame")
-                local SliderButton = Instance.new("Frame")
-                local SliderPercent = Instance.new("Frame")
-                local SliderPercentCorner = Instance.new("UICorner")
-                local SliderDrag = Instance.new("Frame")
-                local SliderDragCorner = Instance.new("UICorner")
-                local UICorner = Instance.new("UICorner")
-                local SliderIcon = Instance.new("ImageLabel")
-                local SilderText = Instance.new("TextLabel")
-                local SilderNumber = Instance.new("TextLabel")
-                local SliderCorner = Instance.new("UICorner")
-
-                Slider.Name = "Slider"
-                Slider.Parent = SectionFrame
-                Slider.BackgroundColor3 = themes.Background
-                Objects[Slider] = "Background"
-                Slider.Size = Scale(UDim2.new(0, 440, 0, 49))
-            
-                SliderButton.Name = "SliderBar"
-                SliderButton.Parent = Slider
-                SliderButton.BackgroundColor3 = themes.Container
-                Objects[SliderButton] = "Container"
-                SliderButton.BorderSizePixel = 0
-                SliderButton.Position = UDim2.new(0.023, 0, 0.694000006, 0)
-                SliderButton.Size = Scale(UDim2.new(0, 420, 0, 8))
-                SliderButton.ZIndex = 2
-            
-                SliderPercent.Name = "SliderInBar"
-                SliderPercent.Parent = SliderButton
-                SliderPercent.BackgroundColor3 = themes.Slider
-                Objects[SliderPercent] = "Slider"
-                SliderPercent.Size = UDim2.new(0, 0, 1, 0)
-                SliderPercent.ZIndex = 2
-            
-                SliderPercentCorner.CornerRadius = UDim.new(0, Scale(4))
-                SliderPercentCorner.Name = "SliderPercentCorner"
-                SliderPercentCorner.Parent = SliderPercent
-            
-                SliderDrag.Name = "SliderDrag"
-                SliderDrag.Parent = SliderPercent
-                SliderDrag.AnchorPoint = Vector2.new(0.5, 0.5)
-                SliderDrag.BackgroundColor3 = themes.TextColor
-                Objects[SliderDrag] = "TextColor"
-                SliderDrag.Position = UDim2.new(1, 0, 0.5, 0)
-                -- Make slider drag handle larger on mobile for better touch interaction
-                local dragSize = isMobile and Scale(UDim2.new(0, 20, 0, 25)) or Scale(UDim2.new(0, 12, 0, 17))
-                SliderDrag.Size = dragSize
-            
-                SliderDragCorner.CornerRadius = UDim.new(0, Scale(4))
-                SliderDragCorner.Name = "SliderDragCorner"
-                SliderDragCorner.Parent = SliderDrag
-            
-                UICorner.CornerRadius = UDim.new(0, Scale(4))
-                UICorner.Parent = SliderButton
-            
-                SliderIcon.Name = "SliderIcon"
-                SliderIcon.Parent = Slider
-                SliderIcon.AnchorPoint = Vector2.new(0.5, 0.899999976)
-                SliderIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SliderIcon.BackgroundTransparency = 1.000
-                SliderIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
-                SliderIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
-                SliderIcon.ZIndex = 2
-                SliderIcon.Image = "rbxassetid://7072987508"
-                SliderIcon.ImageColor3 = themes.TextColor
-                Objects[SliderIcon] = "TextColor"
-            
-                SilderText.Name = "SilderText"
-                SilderText.Parent = Slider
-                SilderText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SilderText.BackgroundTransparency = 1.000
-                SilderText.Size = Scale(UDim2.new(0, 366, 0, 34))
-                SilderText.ZIndex = 2
-                SilderText.Font = Enum.Font.SourceSansSemibold
-                SilderText.Text = " " .. slidertitle
-                SilderText.TextColor3 = themes.TextColor
-                Objects[SilderText] = "TextColor"
-                SilderText.TextSize = ScaleText(22)
-                SilderText.TextXAlignment = Enum.TextXAlignment.Left
-            
-                SilderNumber.Name = "SilderNumber"
-                SilderNumber.Parent = Slider
-                SilderNumber.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                SilderNumber.BackgroundTransparency = 1.000
-                SilderNumber.Position = UDim2.new(0.831818163, 0, -0.0408163257, 0)
-                SilderNumber.Size = Scale(UDim2.new(0, 30, 0, 34))
-                SilderNumber.ZIndex = 2
-                SilderNumber.Font = Enum.Font.SourceSansSemibold
-                SilderNumber.Text = Min_Value
-                SilderNumber.TextColor3 = themes.TextColor
-                Objects[SilderNumber] = "TextColor"
-                SilderNumber.TextSize = ScaleText(22)
-                SilderNumber.TextXAlignment = Enum.TextXAlignment.Right
-                SilderNumber.TextTransparency = 1
-            
-                SliderCorner.CornerRadius = UDim.new(0, Scale(4))
-                SliderCorner.Name = "SliderCorner"
-                SliderCorner.Parent = Slider
-
-                SliderPercent.Size = UDim2.new(((DefaultValue or 0) / Max_Value),0, 1, 0)
-                SilderNumber.Text = tostring(DefaultValue and math.floor((DefaultValue / Max_Value) * (Max_Value - Min_Value) + Min_Value) or 0)
-                pcall(callback, DefaultValue)
-
-                coroutine.wrap(function()
-                    while wait() do
-                        Slider.BackgroundColor3 = themes.Background
-                        SliderPercent.BackgroundColor3 = themes.Slider
-                        SliderDrag.BackgroundColor3 = themes.TextColor
-                        SilderText.TextColor3 = themes.TextColor
-                        SilderNumber.TextColor3 = themes.TextColor
-                        SliderIcon.ImageColor3 = themes.TextColor
-                    end
-                end)()
-
-                local function move(input)
-					local pos =
-						UDim2.new(
-							math.clamp((input.Position.X - SliderButton.AbsolutePosition.X) / SliderButton.AbsoluteSize.X, 0, 1),
-							0,
-							1,
-							0
-						)
-                    Utility:TweenObject(SliderPercent, {Size = pos}, 0.25)
-					local value = math.floor(((pos.X.Scale * Max_Value) / Max_Value) * (Max_Value - Min_Value) + Min_Value)
-					SilderNumber.Text = tostring(value)
-					pcall(callback, value)
-				end
-
-                -- Mobile and desktop compatible input handling
-                SliderDrag.InputBegan:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                       input.UserInputType == Enum.UserInputType.Touch then
-                        dragging = true
-                        Utility:TweenObject(SilderNumber, {TextTransparency = 0}, 0.5)
-                    end
-                end)
-
-                SliderDrag.InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                       input.UserInputType == Enum.UserInputType.Touch then
-                        dragging = false
-                        Utility:TweenObject(SilderNumber, {TextTransparency = 1}, 0.5)
-                    end
-                end)
-
-                Input.InputChanged:Connect(function(input)
-                    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-                                     input.UserInputType == Enum.UserInputType.Touch) then
-                        move(input)
-                    end
-                end)
-
-                local SliderElements = {}
-
-                function SliderElements:Change(tochange)
-                    SliderPercent.Size = UDim2.new(((tochange or 0) / Max_Value), 0, 1, 0)
-					SilderNumber.Text = tostring(tochange and math.floor((tochange / Max_Value) * (Max_Value - Min_Value) + Min_Value) or 0)
-					pcall(callback, tochange)
-				end
-
-                return SliderElements
-            end -- Final
-
-            function Elements:CreateTextbox(boxtitle, desc, callback, def)
-                boxtitle = boxtitle or "Textbox"
-                desc = desc or "Enter here!"
-                callback = callback or function() end
-
-                local TextBox = Instance.new("Frame")
-                local TextBoxText = Instance.new("TextLabel")
-                local TextBoxCorner = Instance.new("UICorner")
-                local Box = Instance.new("TextBox")
-                local UICorner_2 = Instance.new("UICorner")
-                local TextBoxIcon = Instance.new("ImageLabel")
-
-                TextBox.Name = "TextBox"
-                TextBox.Parent = SectionFrame
-                TextBox.BackgroundColor3 = themes.Background
-                Objects[TextBox] = "Background"
-                TextBox.Position = UDim2.new(0.0319148935, 0, 0.826464236, 0)
-                TextBox.Size = Scale(UDim2.new(0, 440, 0, 65))
-            
-                TextBoxText.Name = "TextBoxText"
-                TextBoxText.Parent = TextBox
-                TextBoxText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxText.BackgroundTransparency = 1.000
-                TextBoxText.Size = Scale(UDim2.new(0, 396, 0, 34))
-                TextBoxText.ZIndex = 2
-                TextBoxText.Font = Enum.Font.SourceSansSemibold
-                TextBoxText.Text = " " .. boxtitle
-                TextBoxText.TextColor3 = themes.TextColor
-                Objects[TextBoxText] = "TextColor"
-                TextBoxText.TextSize = ScaleText(22)
-                TextBoxText.TextXAlignment = Enum.TextXAlignment.Left
-            
-                TextBoxCorner.CornerRadius = UDim.new(0, Scale(4))
-                TextBoxCorner.Name = "TextBoxCorner"
-                TextBoxCorner.Parent = TextBox
-            
-                Box.Name = "Box"
-                Box.Parent = TextBox
-                Box.AnchorPoint = Vector2.new(0.5, 0.5)
-                Box.BackgroundColor3 = themes.Container
-                Objects[Box] = "Container"
-                Box.Position = UDim2.new(0.5, 0, 0.714999974, 0)
-                Box.Size = Scale(UDim2.new(0, 426, 0, 25))
-                Box.ZIndex = 2
-                Box.Font = Enum.Font.SourceSansSemibold
-                Box.PlaceholderText = desc
-                Box.Text = ""
-                Box.TextColor3 = themes.TextColor
-                Objects[Box] = "TextColor"
-                Box.TextSize = ScaleText(18)
-            
-                UICorner_2.CornerRadius = UDim.new(0, Scale(4))
-                UICorner_2.Parent = Box
-            
-                TextBoxIcon.Name = "TextBoxIcon"
-                TextBoxIcon.Parent = TextBox
-                TextBoxIcon.AnchorPoint = Vector2.new(0.5, 0.899999976)
-                TextBoxIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                TextBoxIcon.BackgroundTransparency = 1.000
-                TextBoxIcon.Position = UDim2.new(0.949999988, 0, 0.392307699, 0)
-                TextBoxIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
-                TextBoxIcon.ZIndex = 2
-                TextBoxIcon.Image = "rbxassetid://7072716382"
-                TextBoxIcon.ImageColor3 = themes.TextColor
-                Objects[TextBoxIcon] = "TextColor"
-
-                coroutine.wrap(function()
-                    while wait() do
-                        TextBox.BackgroundColor3 = themes.Background
-                        TextBoxText.TextColor3 = themes.TextColor
-                        Box.BackgroundColor3 = themes.Container
-                        Box.TextColor3 = themes.TextColor
-                        TextBoxIcon.ImageColor3 = themes.TextColor
-                    end
-                end)()
-                
-                if def then Box.Text = def end
-                
-                Box.FocusLost:Connect(function()
-                    Utility:Pop(Box, 10)
-                end)
-
-                Box.FocusLost:Connect(function(enterPressed)
-                    if not enterPressed then
-                        return
-                    else
-                        callback(Box.Text)
-                    end
-                end)
-            end -- Final
-
-            function Elements:CreateDropdown(droptitle, setting, callback)
-                local DropElements = {}
-                droptitle = droptitle or "Dropdown"
-                
-                local list = setting.List or {}
-                local search = setting.Search
-                local default = setting.Default
-
-                callback = callback or function() end
-
-                local opened = false
-
-                local TextLabel = Instance.new("TextLabel")
-                local DropButton = Instance.new("TextButton")
-                local DropSearch = Instance.new("TextBox")
-                local Dropdown = Instance.new("Frame")
-                local DropdownCorner = Instance.new("UICorner")
-                local DropdownListLayout = Instance.new("UIListLayout")
-                local TopFrame = Instance.new("Frame")
-                local ArrowIcon = Instance.new("ImageLabel")
-                local TopFrameCorner = Instance.new("UICorner")
-                local DropItemHolder = Instance.new("ScrollingFrame")
-                local DropItemListLayout = Instance.new("UIListLayout")
-                
-                Dropdown.Name = "Dropdown"
-                Dropdown.Parent = SectionFrame
-                Dropdown.BackgroundColor3 = themes.Drop
-                Objects[Dropdown] = "Drop"
-                Dropdown.ClipsDescendants = true
-                Dropdown.Position = UDim2.new(0.0319148935, 0, 0.186978295, 0)
-                Dropdown.Size = Scale(UDim2.new(0, 440, 0, 34))
-                Dropdown.ZIndex = 2
-                
-                DropdownCorner.CornerRadius = UDim.new(0, Scale(4))
-                DropdownCorner.Name = "DropdownCorner"
-                DropdownCorner.Parent = Dropdown
-                
-                DropdownListLayout.Name = "DropdownListLayout"
-                DropdownListLayout.Parent = Dropdown
-                DropdownListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-                DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                DropdownListLayout.Padding = UDim.new(0, Scale(5))
-                
-                TopFrame.Name = "TopFrame"
-                TopFrame.Parent = Dropdown
-                TopFrame.BackgroundColor3 = themes.Background
-                Objects[TopFrame] = "Background"
-                TopFrame.Size = Scale(UDim2.new(0, 440, 0, 34))
-                TopFrame.ZIndex = 2
-                
-                ArrowIcon.Name = "ArrowIcon"
-                ArrowIcon.Parent = TopFrame
-                ArrowIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-                ArrowIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                ArrowIcon.BackgroundTransparency = 1.000
-                ArrowIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
-                ArrowIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
-                ArrowIcon.ZIndex = 2
-                ArrowIcon.Image = "rbxassetid://7072706663"
-                ArrowIcon.ImageColor3 = themes.TextColor
-                Objects[ArrowIcon] = "TextColor"
-                
-                TopFrameCorner.CornerRadius = UDim.new(0, Scale(4))
-                TopFrameCorner.Name = "TopFrameCorner"
-                TopFrameCorner.Parent = TopFrame
-                
-                if search == true then
-                    DropSearch.Name = "DropSearch"
-                    DropSearch.Parent = TopFrame
-                    DropSearch.AnchorPoint = Vector2.new(1, 0)
-                    DropSearch.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    DropSearch.BackgroundTransparency = 1.000
-                    DropSearch.Position = UDim2.new(0.899999976, 0, 0, 0)
-                    DropSearch.Size = Scale(UDim2.new(0, 389, 0, 34))
-                    DropSearch.ZIndex = 2
-                    DropSearch.Font = Enum.Font.SourceSansSemibold
-                    DropSearch.Text = droptitle .. ":"
-                    DropSearch.TextColor3 = themes.TextColor
-                    Objects[DropSearch] = "TextColor"
-                    DropSearch.TextSize = ScaleText(22)
-                    DropSearch.TextXAlignment = Enum.TextXAlignment.Left
-                else
-                    TextLabel.Parent = TopFrame
-                    TextLabel.AnchorPoint = Vector2.new(1, 0)
-                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    TextLabel.BackgroundTransparency = 1.000
-                    TextLabel.Position = UDim2.new(0.899999976, 0, 0, 0)
-                    TextLabel.Size = Scale(UDim2.new(0, 389, 0, 34))
-                    TextLabel.Font = Enum.Font.SourceSansSemibold
-                    TextLabel.Text = droptitle .. ":"
-                    TextLabel.TextColor3 = themes.TextColor
-                    Objects[TextLabel] = "TextColor"
-                    TextLabel.TextSize = ScaleText(22)
-                    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
-                    
-                    DropButton.Name = "DropButton"
-                    DropButton.Parent = TopFrame
-                    DropButton.Active = false
-                    DropButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    DropButton.BackgroundTransparency = 1.000
-                    DropButton.Size = UDim2.new(1, 0, 0, Scale(34))
-                    DropButton.ZIndex = 2
-                    DropButton.AutoButtonColor = false
-                    DropButton.Font = Enum.Font.SourceSansSemibold
-                    DropButton.Text = ""
-                    DropButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    DropButton.TextSize = ScaleText(22)
-                    DropButton.TextWrapped = true
-                    DropButton.TextXAlignment = Enum.TextXAlignment.Left
-                end
-
-                DropItemHolder.Name = "DropItemHolder"
-                DropItemHolder.Parent = Dropdown
-                DropItemHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                DropItemHolder.BackgroundTransparency = 1.000
-                DropItemHolder.BorderSizePixel = 0
-                DropItemHolder.Position = UDim2.new(0, 0, 0.254901975, 0)
-                DropItemHolder.Size = UDim2.new(1, 0, 0.0130718956, Scale(100))
-                DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
-                DropItemHolder.ScrollBarThickness = Scale(6)
-                DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
-                Objects[DropItemHolder] = "ScrollBar"
-                
-                DropItemListLayout.Name = "DropItemListLayout"
-                DropItemListLayout.Parent = DropItemHolder
-                DropItemListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-                DropItemListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-                DropItemListLayout.Padding = UDim.new(0, Scale(5))
-
-                coroutine.wrap(function()
-                    while wait() do
-                        Dropdown.BackgroundColor3 = themes.Drop
-                        ArrowIcon.ImageColor3 = themes.TextColor
-                        TopFrame.BackgroundColor3 = themes.Background
-                        TextLabel.TextColor3 = themes.TextColor
-                        DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
-                        if DropSearch then
-                            DropSearch.TextColor3 = themes.TextColor
-                        end
-                    end
-                end)()
-
-                if default then
-                    callback(default)
-                    TextLabel.Text = droptitle .. ": " .. default
-                elseif default and search then
-                    callback(default)
-                    DropSearch.Text = droptitle .. ": " .. default
-                end
-                
-                if not search then
-                    DropButton.MouseButton1Click:Connect(function()
-                        if opened then
-                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-                        else
-                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
-                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
-                        end
-                        opened = not opened
-                    end) 
-                else
-                    local function updateResult()
-                        local search = string.lower(DropSearch.Text)
-                        for i, v in pairs(DropItemHolder:GetChildren()) do
-                            if v:IsA("GuiButton") then
-                                if search ~= "" then
-                                    local item = string.lower(v.Text)
-                                    if string.find(item, search) then
-                                        v.Visible = true
-                                    else
-                                        v.Visible = false
-                                    end
-                                else
-                                    v.Visible = true
-                                end
-                            end
-                        end
-                    end
-
-                    local focused
-
-                    DropSearch.Focused:Connect(function()
-                        focused = true
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
-                    end)
-
-                    DropSearch.FocusLost:Connect(function()
-                        focused = false
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-
-                        if not tostring(DropSearch.Text) or not tonumber(DropSearch.Text) then
-                            DropSearch.Text = droptitle .. ":"
-                            for i, v in pairs(DropItemHolder:GetChildren()) do
-                                if v:IsA("GuiButton") then
-                                    v.Visible = true
-                                end
-                            end
-                        end
-                    end)
-
-                    DropSearch.Changed:Connect(function()
-                        if focused then
-                            updateResult()
-                        end
-                    end)  
-                end
-
-                DropItemListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    local absoluteSize = DropItemListLayout.AbsoluteContentSize
-                    DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, absoluteSize.Y)
-                end)
-
-                for i, v in next, list do
-                    local DropItem = Instance.new("TextButton")
-                    local DropItemCorner = Instance.new("UICorner")              
-
-                    DropItem.Name = v .. "_DropItem"
-                    DropItem.Parent = DropItemHolder
-                    DropItem.BackgroundColor3 = themes.Background
-                    Objects[DropItem] = "Background"
-                    DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
-                    DropItem.AutoButtonColor = false
-                    DropItem.Font = Enum.Font.SourceSansSemibold
-                    DropItem.Text = " " .. v
-                    DropItem.TextColor3 = themes.TextColor
-                    Objects[DropItem] = "TextColor"
-                    DropItem.TextSize = ScaleText(21)
-                    DropItem.TextXAlignment = Enum.TextXAlignment.Left
-                    DropItem.ZIndex = 2
-                
-                    DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
-                    DropItemCorner.Name = "ToggleCorner"
-                    DropItemCorner.Parent = DropItem
-
-                    coroutine.wrap(function()
-                        while wait() do
-                            DropItem.BackgroundColor3 = themes.Background
-                            DropItem.TextColor3 = themes.TextColor
-                        end
-                    end)()
-
-                    DropItem.MouseButton1Click:Connect(function()
-                        opened = false
-                        Utility:Pop(DropItem, 8)
-                        callback(v)
-
-                        if not search then
-                            TextLabel.Text = droptitle .. ": " .. v
-                        else
-                            DropSearch.Text = droptitle .. ": " .. v
-                        end
-
-                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-                    end)
-                end
-
-                function DropElements:Add(newlist)
-                    newlist = newlist or {}
-
-                    for i, v in next, newlist do
-                        local DropItem = Instance.new("TextButton")
-                        local DropItemCorner = Instance.new("UICorner")              
-    
-                        DropItem.Name = v .. "_DropItem"
-                        DropItem.Parent = DropItemHolder
-                        DropItem.BackgroundColor3 = themes.Background
-                        Objects[DropItem] = "Background2"
-                        DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
-                        DropItem.AutoButtonColor = false
-                        DropItem.Font = Enum.Font.SourceSansSemibold
-                        DropItem.Text = " " .. v
-                        DropItem.TextColor3 = themes.TextColor
-                        Objects[DropItem] = "TextColor"
-                        DropItem.TextSize = ScaleText(21)
-                        DropItem.TextXAlignment = Enum.TextXAlignment.Left
-                        DropItem.ZIndex = 2
-                    
-                        DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
-                        DropItemCorner.Name = "ToggleCorner"
-                        DropItemCorner.Parent = DropItem
-
-                        coroutine.wrap(function()
-                            while wait() do
-                                DropItem.BackgroundColor3 = themes.Background
-                                DropItem.TextColor3 = themes.TextColor
-                            end
-                        end)()
-    
-                        DropItem.MouseButton1Click:Connect(function()
-                            opened = false
-                            Utility:Pop(DropItem, 8)
-                            callback(v)
-
-                            if not search then
-                                TextLabel.Text = droptitle .. ": " .. v
-                            else
-                                DropSearch.Text = droptitle .. ": " .. v
-                            end
-
-                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
-                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
-                        end)
-                    end
-                end
-
-                function DropElements:Clear()
-                    for i, v in pairs(DropItemHolder:GetChildren()) do
-                        if v:IsA("TextButton") then
-                            v:Destroy()
-                        end
-                    end
-                end
-
-                return DropElements
-            end -- Final
-
-            return Elements
-        end
-        return Sections
-    end
-    return Tabs
-end
-
-return CFAHublocal CFAHub = {}
+local CFAHub = {}
 
 repeat wait() until game:IsLoaded()
 repeat wait() until game.Players.LocalPlayer
@@ -1282,6 +692,7 @@ function CFAHub:CreateWindow(title, gameName, intro)
             ShadowBlue.ImageColor3 = themes.Glow
         end
     end)()
+    
     local Tabs = {}
 
     local first = true
@@ -1523,9 +934,6 @@ function CFAHub:CreateWindow(title, gameName, intro)
 
                 Button.MouseButton1Click:Connect(function()
                     Utility:Pop(Button, 10)
-                end)
-
-                Button.MouseButton1Click:Connect(function()
                     pcall(callback)
                 end)
             end -- Final
@@ -1542,7 +950,6 @@ function CFAHub:CreateWindow(title, gameName, intro)
                 local IconEnable = Instance.new("ImageLabel")
                 local IconDisable = Instance.new("ImageLabel")
                 local ToggleText = Instance.new("TextLabel")
-            
                 local ToggleDesc = Instance.new("TextLabel")
 
                 if description == false then
@@ -1664,7 +1071,8 @@ function CFAHub:CreateWindow(title, gameName, intro)
                     }):Play()
                 end
                 pcall(callback, isToggle)
-                local OnClick= function() 
+                
+                local OnClick = function() 
                     if isToggle == false then
                         isToggle = true
                         game.TweenService:Create(IconEnable, TweenInfo.new(0.11, Enum.EasingStyle.Linear,Enum.EasingDirection.In), {
@@ -1678,7 +1086,9 @@ function CFAHub:CreateWindow(title, gameName, intro)
                     end
                     pcall(callback, isToggle)
                 end
+                
                 ToggleButton.MouseButton1Click:Connect(OnClick)
+                
                 return {
                     SetValue = function(val) 
                         if val~=isToggle then 
@@ -1687,3 +1097,727 @@ function CFAHub:CreateWindow(title, gameName, intro)
                     end
                 }
             end -- Final
+
+            function Elements:CreateSlider(slidertitle, setting, callback)
+                slidertitle = slidertitle or "Slider"
+                callback = callback or function() end
+                local Max_Value = setting.Max or 100
+                local Min_Value = setting.Min or 0
+                local DefaultValue = setting.DefaultValue or 0
+
+                local dragging = false
+
+                local Slider = Instance.new("Frame")
+                local SliderButton = Instance.new("Frame")
+                local SliderPercent = Instance.new("Frame")
+                local SliderPercentCorner = Instance.new("UICorner")
+                local SliderDrag = Instance.new("Frame")
+                local SliderDragCorner = Instance.new("UICorner")
+                local UICorner = Instance.new("UICorner")
+                local SliderIcon = Instance.new("ImageLabel")
+                local SilderText = Instance.new("TextLabel")
+                local SilderNumber = Instance.new("TextLabel")
+                local SliderCorner = Instance.new("UICorner")
+
+                Slider.Name = "Slider"
+                Slider.Parent = SectionFrame
+                Slider.BackgroundColor3 = themes.Background
+                Objects[Slider] = "Background"
+                Slider.Size = Scale(UDim2.new(0, 440, 0, 49))
+            
+                SliderButton.Name = "SliderBar"
+                SliderButton.Parent = Slider
+                SliderButton.BackgroundColor3 = themes.Container
+                Objects[SliderButton] = "Container"
+                SliderButton.BorderSizePixel = 0
+                SliderButton.Position = UDim2.new(0.023, 0, 0.694000006, 0)
+                SliderButton.Size = Scale(UDim2.new(0, 420, 0, 8))
+                SliderButton.ZIndex = 2
+            
+                SliderPercent.Name = "SliderInBar"
+                SliderPercent.Parent = SliderButton
+                SliderPercent.BackgroundColor3 = themes.Slider
+                Objects[SliderPercent] = "Slider"
+                SliderPercent.Size = UDim2.new(0, 0, 1, 0)
+                SliderPercent.ZIndex = 2
+            
+                SliderPercentCorner.CornerRadius = UDim.new(0, Scale(4))
+                SliderPercentCorner.Name = "SliderPercentCorner"
+                SliderPercentCorner.Parent = SliderPercent
+            
+                SliderDrag.Name = "SliderDrag"
+                SliderDrag.Parent = SliderPercent
+                SliderDrag.AnchorPoint = Vector2.new(0.5, 0.5)
+                SliderDrag.BackgroundColor3 = themes.TextColor
+                Objects[SliderDrag] = "TextColor"
+                SliderDrag.Position = UDim2.new(1, 0, 0.5, 0)
+                -- Make slider drag handle larger on mobile for better touch interaction
+                local dragSize = isMobile and Scale(UDim2.new(0, 20, 0, 25)) or Scale(UDim2.new(0, 12, 0, 17))
+                SliderDrag.Size = dragSize
+            
+                SliderDragCorner.CornerRadius = UDim.new(0, Scale(4))
+                SliderDragCorner.Name = "SliderDragCorner"
+                SliderDragCorner.Parent = SliderDrag
+            
+                UICorner.CornerRadius = UDim.new(0, Scale(4))
+                UICorner.Parent = SliderButton
+            
+                SliderIcon.Name = "SliderIcon"
+                SliderIcon.Parent = Slider
+                SliderIcon.AnchorPoint = Vector2.new(0.5, 0.899999976)
+                SliderIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                SliderIcon.BackgroundTransparency = 1.000
+                SliderIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
+                SliderIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
+                SliderIcon.ZIndex = 2
+                SliderIcon.Image = "rbxassetid://7072987508"
+                SliderIcon.ImageColor3 = themes.TextColor
+                Objects[SliderIcon] = "TextColor"
+            
+                SilderText.Name = "SilderText"
+                SilderText.Parent = Slider
+                SilderText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                SilderText.BackgroundTransparency = 1.000
+                SilderText.Size = Scale(UDim2.new(0, 366, 0, 34))
+                SilderText.ZIndex = 2
+                SilderText.Font = Enum.Font.SourceSansSemibold
+                SilderText.Text = " " .. slidertitle
+                SilderText.TextColor3 = themes.TextColor
+                Objects[SilderText] = "TextColor"
+                SilderText.TextSize = ScaleText(22)
+                SilderText.TextXAlignment = Enum.TextXAlignment.Left
+            
+                SilderNumber.Name = "SilderNumber"
+                SilderNumber.Parent = Slider
+                SilderNumber.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                SilderNumber.BackgroundTransparency = 1.000
+                SilderNumber.Position = UDim2.new(0.831818163, 0, -0.0408163257, 0)
+                SilderNumber.Size = Scale(UDim2.new(0, 30, 0, 34))
+                SilderNumber.ZIndex = 2
+                SilderNumber.Font = Enum.Font.SourceSansSemibold
+                SilderNumber.Text = Min_Value
+                SilderNumber.TextColor3 = themes.TextColor
+                Objects[SilderNumber] = "TextColor"
+                SilderNumber.TextSize = ScaleText(22)
+                SilderNumber.TextXAlignment = Enum.TextXAlignment.Right
+                SilderNumber.TextTransparency = 1
+            
+                SliderCorner.CornerRadius = UDim.new(0, Scale(4))
+                SliderCorner.Name = "SliderCorner"
+                SliderCorner.Parent = Slider
+
+                SliderPercent.Size = UDim2.new(((DefaultValue or 0) / Max_Value),0, 1, 0)
+                SilderNumber.Text = tostring(DefaultValue and math.floor((DefaultValue / Max_Value) * (Max_Value - Min_Value) + Min_Value) or 0)
+                pcall(callback, DefaultValue)
+
+                coroutine.wrap(function()
+                    while wait() do
+                        Slider.BackgroundColor3 = themes.Background
+                        SliderPercent.BackgroundColor3 = themes.Slider
+                        SliderDrag.BackgroundColor3 = themes.TextColor
+                        SilderText.TextColor3 = themes.TextColor
+                        SilderNumber.TextColor3 = themes.TextColor
+                        SliderIcon.ImageColor3 = themes.TextColor
+                    end
+                end)()
+
+                local function move(input)
+					local pos =
+						UDim2.new(
+							math.clamp((input.Position.X - SliderButton.AbsolutePosition.X) / SliderButton.AbsoluteSize.X, 0, 1),
+							0,
+							1,
+							0
+						)
+                    Utility:TweenObject(SliderPercent, {Size = pos}, 0.25)
+					local value = math.floor(((pos.X.Scale * Max_Value) / Max_Value) * (Max_Value - Min_Value) + Min_Value)
+					SilderNumber.Text = tostring(value)
+					pcall(callback, value)
+				end
+
+                -- Mobile and desktop compatible input handling
+                SliderDrag.InputBegan:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+                       input.UserInputType == Enum.UserInputType.Touch then
+                        dragging = true
+                        Utility:TweenObject(SilderNumber, {TextTransparency = 0}, 0.5)
+                    end
+                end)
+
+                SliderDrag.InputEnded:Connect(function(input)
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+                       input.UserInputType == Enum.UserInputType.Touch then
+                        dragging = false
+                        Utility:TweenObject(SilderNumber, {TextTransparency = 1}, 0.5)
+                    end
+                end)
+
+                Input.InputChanged:Connect(function(input)
+                    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
+                                     input.UserInputType == Enum.UserInputType.Touch) then
+                        move(input)
+                    end
+                end)
+
+                local SliderElements = {}
+
+                function SliderElements:Change(tochange)
+                    SliderPercent.Size = UDim2.new(((tochange or 0) / Max_Value), 0, 1, 0)
+					SilderNumber.Text = tostring(tochange and math.floor((tochange / Max_Value) * (Max_Value - Min_Value) + Min_Value) or 0)
+					pcall(callback, tochange)
+				end
+
+                return SliderElements
+            end -- Final
+
+            function Elements:CreateTextbox(boxtitle, desc, callback, def)
+                boxtitle = boxtitle or "Textbox"
+                desc = desc or "Enter here!"
+                callback = callback or function() end
+
+                local TextBox = Instance.new("Frame")
+                local TextBoxText = Instance.new("TextLabel")
+                local TextBoxCorner = Instance.new("UICorner")
+                local Box = Instance.new("TextBox")
+                local UICorner_2 = Instance.new("UICorner")
+                local TextBoxIcon = Instance.new("ImageLabel")
+
+                TextBox.Name = "TextBox"
+                TextBox.Parent = SectionFrame
+                TextBox.BackgroundColor3 = themes.Background
+                Objects[TextBox] = "Background"
+                TextBox.Position = UDim2.new(0.0319148935, 0, 0.826464236, 0)
+                TextBox.Size = Scale(UDim2.new(0, 440, 0, 65))
+            
+                TextBoxText.Name = "TextBoxText"
+                TextBoxText.Parent = TextBox
+                TextBoxText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                TextBoxText.BackgroundTransparency = 1.000
+                TextBoxText.Size = Scale(UDim2.new(0, 396, 0, 34))
+                TextBoxText.ZIndex = 2
+                TextBoxText.Font = Enum.Font.SourceSansSemibold
+                TextBoxText.Text = " " .. boxtitle
+                TextBoxText.TextColor3 = themes.TextColor
+                Objects[TextBoxText] = "TextColor"
+                TextBoxText.TextSize = ScaleText(22)
+                TextBoxText.TextXAlignment = Enum.TextXAlignment.Left
+            
+                TextBoxCorner.CornerRadius = UDim.new(0, Scale(4))
+                TextBoxCorner.Name = "TextBoxCorner"
+                TextBoxCorner.Parent = TextBox
+            
+                Box.Name = "Box"
+                Box.Parent = TextBox
+                Box.AnchorPoint = Vector2.new(0.5, 0.5)
+                Box.BackgroundColor3 = themes.Container
+                Objects[Box] = "Container"
+                Box.Position = UDim2.new(0.5, 0, 0.714999974, 0)
+                Box.Size = Scale(UDim2.new(0, 426, 0, 25))
+                Box.ZIndex = 2
+                Box.Font = Enum.Font.SourceSansSemibold
+                Box.PlaceholderText = desc
+                Box.Text = ""
+                Box.TextColor3 = themes.TextColor
+                Objects[Box] = "TextColor"
+                Box.TextSize = ScaleText(18)
+            
+                UICorner_2.CornerRadius = UDim.new(0, Scale(4))
+                UICorner_2.Parent = Box
+            
+                TextBoxIcon.Name = "TextBoxIcon"
+                TextBoxIcon.Parent = TextBox
+                TextBoxIcon.AnchorPoint = Vector2.new(0.5, 0.899999976)
+                TextBoxIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                TextBoxIcon.BackgroundTransparency = 1.000
+                TextBoxIcon.Position = UDim2.new(0.949999988, 0, 0.392307699, 0)
+                TextBoxIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
+                TextBoxIcon.ZIndex = 2
+                TextBoxIcon.Image = "rbxassetid://7072716382"
+                TextBoxIcon.ImageColor3 = themes.TextColor
+                Objects[TextBoxIcon] = "TextColor"
+
+                coroutine.wrap(function()
+                    while wait() do
+                        TextBox.BackgroundColor3 = themes.Background
+                        TextBoxText.TextColor3 = themes.TextColor
+                        Box.BackgroundColor3 = themes.Container
+                        Box.TextColor3 = themes.TextColor
+                        TextBoxIcon.ImageColor3 = themes.TextColor
+                    end
+                end)()
+                
+                if def then Box.Text = def end
+                
+                Box.FocusLost:Connect(function()
+                    Utility:Pop(Box, 10)
+                end)
+
+                Box.FocusLost:Connect(function(enterPressed)
+                    if not enterPressed then
+                        return
+                    else
+                        callback(Box.Text)
+                    end
+                end)
+            end -- Final
+
+            function Elements:CreateKeybind(bindtitle, keycodename, callback)
+                bindtitle = bindtitle or "Bind"
+                callback = callback or function() end
+                keycodename = keycodename or "A"
+
+                local Default = keycodename
+                local Type = tostring(Default):match("UserInputType") and "UserInputType" or "KeyCode"
+
+                keycodename = tostring(keycodename):gsub("Enum.UserInputType.", "")
+                keycodename = tostring(keycodename):gsub("Enum.KeyCode.", "")
+
+                local BindButton = Instance.new("TextButton")
+                local BindCorner = Instance.new("UICorner")
+                local BindText = Instance.new("TextLabel")
+                local KeyCode = Instance.new("Frame")
+                local KeyCorner = Instance.new("UICorner")
+                local BindKeyCode = Instance.new("TextLabel")
+                
+                BindButton.Name = "BindButton"
+                BindButton.Parent = SectionFrame
+                BindButton.BackgroundColor3 = themes.Background
+                Objects[BindButton] = "Background"
+                BindButton.Position = UDim2.new(0.892671406, 0, 0.452857137, 0)
+                BindButton.Size = Scale(UDim2.new(0, 440, 0, 34))
+                BindButton.ZIndex = 2
+                BindButton.AutoButtonColor = false
+                BindButton.Font = Enum.Font.SourceSansSemibold
+                BindButton.Text = ""
+                BindButton.TextColor3 = themes.TextColor
+                Objects[BindButton] = "TextColor"
+                BindButton.TextSize = ScaleText(22)
+                BindButton.TextWrapped = true
+                BindButton.TextXAlignment = Enum.TextXAlignment.Left
+                
+                BindCorner.CornerRadius = UDim.new(0, Scale(4))
+                BindCorner.Name = "BindCorner"
+                BindCorner.Parent = BindButton
+                
+                BindText.Name = "BindText"
+                BindText.Parent = BindButton
+                BindText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                BindText.BackgroundTransparency = 1.000
+                BindText.Size = Scale(UDim2.new(0, 283, 0, 34))
+                BindText.ZIndex = 2
+                BindText.Font = Enum.Font.SourceSansSemibold
+                BindText.Text = " " .. bindtitle
+                BindText.TextColor3 = themes.TextColor
+                Objects[BindText] = "TextColor"
+                BindText.TextSize = ScaleText(22)
+                BindText.TextXAlignment = Enum.TextXAlignment.Left
+                
+                KeyCode.Name = "KeyCode"
+                KeyCode.Parent = BindButton
+                KeyCode.BackgroundColor3 = themes.Container
+                Objects[KeyCode] = "Container"
+                KeyCode.Position = UDim2.new(0.643181801, 0, 0.14705883, 0)
+                KeyCode.Size = Scale(UDim2.new(0, 148, 0, 24))
+                KeyCode.ZIndex = 2
+                
+                KeyCorner.CornerRadius = UDim.new(0, Scale(4))
+                KeyCorner.Name = "KeyCorner"
+                KeyCorner.Parent = KeyCode
+                
+                BindKeyCode.Name = "BindKeyCode"
+                BindKeyCode.Parent = KeyCode
+                BindKeyCode.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                BindKeyCode.BackgroundTransparency = 1.000
+                BindKeyCode.Size = UDim2.new(1, 0, 1, 0)
+                BindKeyCode.ZIndex = 2
+                BindKeyCode.Font = Enum.Font.SourceSansSemibold
+                BindKeyCode.Text = tostring(Default):gsub("Enum.KeyCode.", "") .. " "
+                BindKeyCode.TextColor3 = themes.TextColor
+                Objects[BindKeyCode] = "TextColor"
+                BindKeyCode.TextSize = ScaleText(19)
+                BindKeyCode.TextWrapped = true
+
+                coroutine.wrap(function()
+                    while wait() do
+                        BindButton.BackgroundColor3 = themes.Background
+                        BindButton.TextColor3 = themes.TextColor
+                        BindText.TextColor3 = themes.TextColor
+                        KeyCode.BackgroundColor3 = themes.Container
+                        BindKeyCode.TextColor3 = themes.TextColor
+                    end
+                end)()
+
+                local WhitelistedType = {
+                    [Enum.UserInputType.MouseButton1] = "Mouse1";
+                    [Enum.UserInputType.MouseButton2] = "Mouse2";
+                    [Enum.UserInputType.MouseButton3] = "Mouse3";
+                };
+
+                BindButton.MouseButton1Click:Connect(function()
+                    Utility:Pop(KeyCode, 10)
+                    local Connection;
+		
+                    BindKeyCode.Text = "...";
+
+                    Connection = Input.InputBegan:Connect(function(i)
+                        if WhitelistedType[i.UserInputType] then
+                            Utility:Pop(KeyCode, 10)
+                            BindKeyCode.Text = WhitelistedType[i.UserInputType];
+                            spawn(function()
+                                wait(0.1)
+                                Default = i.UserInputType;
+                                Type = "UserInputType";
+                            end);
+                        elseif i.KeyCode ~= Enum.KeyCode.Unknown then
+                            Utility:Pop(KeyCode, 10)
+                            BindKeyCode.Text = tostring(i.KeyCode):gsub("Enum.KeyCode.", "");
+                            spawn(function()
+                                wait(0.1)
+                                Default = i.KeyCode;
+                                Type = "KeyCode";
+                            end);
+                        else
+                            warn("Exception: " .. i.UserInputType .. " " .. i.KeyCode);
+                        end;
+
+                        Connection:Disconnect();
+                    end);
+                end)
+
+                Input.InputBegan:Connect(function(i)
+                    if (Default == i.UserInputType or Default == i.KeyCode) then
+                        Utility:Pop(KeyCode, 10)
+                        callback(Default);
+                    end;
+                end);
+
+            end -- Final
+
+            function Elements:CreateDropdown(droptitle, setting, callback)
+                local DropElements = {}
+                droptitle = droptitle or "Dropdown"
+                
+                local list = setting.List or {}
+                local search = setting.Search
+                local default = setting.Default
+
+                callback = callback or function() end
+
+                local opened = false
+
+                local TextLabel = Instance.new("TextLabel")
+                local DropButton = Instance.new("TextButton")
+                local DropSearch = Instance.new("TextBox")
+                local Dropdown = Instance.new("Frame")
+                local DropdownCorner = Instance.new("UICorner")
+                local DropdownListLayout = Instance.new("UIListLayout")
+                local TopFrame = Instance.new("Frame")
+                local ArrowIcon = Instance.new("ImageLabel")
+                local TopFrameCorner = Instance.new("UICorner")
+                local DropItemHolder = Instance.new("ScrollingFrame")
+                local DropItemListLayout = Instance.new("UIListLayout")
+                
+                Dropdown.Name = "Dropdown"
+                Dropdown.Parent = SectionFrame
+                Dropdown.BackgroundColor3 = themes.Drop
+                Objects[Dropdown] = "Drop"
+                Dropdown.ClipsDescendants = true
+                Dropdown.Position = UDim2.new(0.0319148935, 0, 0.186978295, 0)
+                Dropdown.Size = Scale(UDim2.new(0, 440, 0, 34))
+                Dropdown.ZIndex = 2
+                
+                DropdownCorner.CornerRadius = UDim.new(0, Scale(4))
+                DropdownCorner.Name = "DropdownCorner"
+                DropdownCorner.Parent = Dropdown
+                
+                DropdownListLayout.Name = "DropdownListLayout"
+                DropdownListLayout.Parent = Dropdown
+                DropdownListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                DropdownListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                DropdownListLayout.Padding = UDim.new(0, Scale(5))
+                
+                TopFrame.Name = "TopFrame"
+                TopFrame.Parent = Dropdown
+                TopFrame.BackgroundColor3 = themes.Background
+                Objects[TopFrame] = "Background"
+                TopFrame.Size = Scale(UDim2.new(0, 440, 0, 34))
+                TopFrame.ZIndex = 2
+                
+                ArrowIcon.Name = "ArrowIcon"
+                ArrowIcon.Parent = TopFrame
+                ArrowIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+                ArrowIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                ArrowIcon.BackgroundTransparency = 1.000
+                ArrowIcon.Position = UDim2.new(0.949999988, 0, 0.5, 0)
+                ArrowIcon.Size = Scale(UDim2.new(0, 23, 0, 23))
+                ArrowIcon.ZIndex = 2
+                ArrowIcon.Image = "rbxassetid://7072706663"
+                ArrowIcon.ImageColor3 = themes.TextColor
+                Objects[ArrowIcon] = "TextColor"
+                
+                TopFrameCorner.CornerRadius = UDim.new(0, Scale(4))
+                TopFrameCorner.Name = "TopFrameCorner"
+                TopFrameCorner.Parent = TopFrame
+                
+                if search == true then
+                    DropSearch.Name = "DropSearch"
+                    DropSearch.Parent = TopFrame
+                    DropSearch.AnchorPoint = Vector2.new(1, 0)
+                    DropSearch.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    DropSearch.BackgroundTransparency = 1.000
+                    DropSearch.Position = UDim2.new(0.899999976, 0, 0, 0)
+                    DropSearch.Size = Scale(UDim2.new(0, 389, 0, 34))
+                    DropSearch.ZIndex = 2
+                    DropSearch.Font = Enum.Font.SourceSansSemibold
+                    DropSearch.Text = droptitle .. ":"
+                    DropSearch.TextColor3 = themes.TextColor
+                    Objects[DropSearch] = "TextColor"
+                    DropSearch.TextSize = ScaleText(22)
+                    DropSearch.TextXAlignment = Enum.TextXAlignment.Left
+                else
+                    TextLabel.Parent = TopFrame
+                    TextLabel.AnchorPoint = Vector2.new(1, 0)
+                    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    TextLabel.BackgroundTransparency = 1.000
+                    TextLabel.Position = UDim2.new(0.899999976, 0, 0, 0)
+                    TextLabel.Size = Scale(UDim2.new(0, 389, 0, 34))
+                    TextLabel.Font = Enum.Font.SourceSansSemibold
+                    TextLabel.Text = droptitle .. ":"
+                    TextLabel.TextColor3 = themes.TextColor
+                    Objects[TextLabel] = "TextColor"
+                    TextLabel.TextSize = ScaleText(22)
+                    TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    
+                    DropButton.Name = "DropButton"
+                    DropButton.Parent = TopFrame
+                    DropButton.Active = false
+                    DropButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                    DropButton.BackgroundTransparency = 1.000
+                    DropButton.Size = UDim2.new(1, 0, 0, Scale(34))
+                    DropButton.ZIndex = 2
+                    DropButton.AutoButtonColor = false
+                    DropButton.Font = Enum.Font.SourceSansSemibold
+                    DropButton.Text = ""
+                    DropButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    DropButton.TextSize = ScaleText(22)
+                    DropButton.TextWrapped = true
+                    DropButton.TextXAlignment = Enum.TextXAlignment.Left
+                end
+
+                DropItemHolder.Name = "DropItemHolder"
+                DropItemHolder.Parent = Dropdown
+                DropItemHolder.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                DropItemHolder.BackgroundTransparency = 1.000
+                DropItemHolder.BorderSizePixel = 0
+                DropItemHolder.Position = UDim2.new(0, 0, 0.254901975, 0)
+                DropItemHolder.Size = UDim2.new(1, 0, 0.0130718956, Scale(100))
+                DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+                DropItemHolder.ScrollBarThickness = Scale(6)
+                DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
+                Objects[DropItemHolder] = "ScrollBar"
+                
+                DropItemListLayout.Name = "DropItemListLayout"
+                DropItemListLayout.Parent = DropItemHolder
+                DropItemListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                DropItemListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                DropItemListLayout.Padding = UDim.new(0, Scale(5))
+
+                coroutine.wrap(function()
+                    while wait() do
+                        Dropdown.BackgroundColor3 = themes.Drop
+                        ArrowIcon.ImageColor3 = themes.TextColor
+                        TopFrame.BackgroundColor3 = themes.Background
+                        TextLabel.TextColor3 = themes.TextColor
+                        DropItemHolder.ScrollBarImageColor3 = themes.ScrollBar
+                        if DropSearch then
+                            DropSearch.TextColor3 = themes.TextColor
+                        end
+                    end
+                end)()
+
+                if default then
+                    callback(default)
+                    TextLabel.Text = droptitle .. ": " .. default
+                elseif default and search then
+                    callback(default)
+                    DropSearch.Text = droptitle .. ": " .. default
+                end
+                
+                if not search then
+                    DropButton.MouseButton1Click:Connect(function()
+                        if opened then
+                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+                        else
+                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
+                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
+                        end
+                        opened = not opened
+                    end) 
+                else
+                    local function updateResult()
+                        local search = string.lower(DropSearch.Text)
+                        for i, v in pairs(DropItemHolder:GetChildren()) do
+                            if v:IsA("GuiButton") then
+                                if search ~= "" then
+                                    local item = string.lower(v.Text)
+                                    if string.find(item, search) then
+                                        v.Visible = true
+                                    else
+                                        v.Visible = false
+                                    end
+                                else
+                                    v.Visible = true
+                                end
+                            end
+                        end
+                    end
+
+                    local focused
+
+                    DropSearch.Focused:Connect(function()
+                        focused = true
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 146)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 180}):Play();
+                    end)
+
+                    DropSearch.FocusLost:Connect(function()
+                        focused = false
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+
+                        if not tostring(DropSearch.Text) or not tonumber(DropSearch.Text) then
+                            DropSearch.Text = droptitle .. ":"
+                            for i, v in pairs(DropItemHolder:GetChildren()) do
+                                if v:IsA("GuiButton") then
+                                    v.Visible = true
+                                end
+                            end
+                        end
+                    end)
+
+                    DropSearch.Changed:Connect(function()
+                        if focused then
+                            updateResult()
+                        end
+                    end)  
+                end
+
+                DropItemListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    local absoluteSize = DropItemListLayout.AbsoluteContentSize
+                    DropItemHolder.CanvasSize = UDim2.new(0, 0, 0, absoluteSize.Y)
+                end)
+
+                for i, v in next, list do
+                    local DropItem = Instance.new("TextButton")
+                    local DropItemCorner = Instance.new("UICorner")              
+
+                    DropItem.Name = v .. "_DropItem"
+                    DropItem.Parent = DropItemHolder
+                    DropItem.BackgroundColor3 = themes.Background
+                    Objects[DropItem] = "Background"
+                    DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
+                    DropItem.AutoButtonColor = false
+                    DropItem.Font = Enum.Font.SourceSansSemibold
+                    DropItem.Text = " " .. v
+                    DropItem.TextColor3 = themes.TextColor
+                    Objects[DropItem] = "TextColor"
+                    DropItem.TextSize = ScaleText(21)
+                    DropItem.TextXAlignment = Enum.TextXAlignment.Left
+                    DropItem.ZIndex = 2
+                
+                    DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
+                    DropItemCorner.Name = "ToggleCorner"
+                    DropItemCorner.Parent = DropItem
+
+                    coroutine.wrap(function()
+                        while wait() do
+                            DropItem.BackgroundColor3 = themes.Background
+                            DropItem.TextColor3 = themes.TextColor
+                        end
+                    end)()
+
+                    DropItem.MouseButton1Click:Connect(function()
+                        opened = false
+                        Utility:Pop(DropItem, 8)
+                        callback(v)
+
+                        if not search then
+                            TextLabel.Text = droptitle .. ": " .. v
+                        else
+                            DropSearch.Text = droptitle .. ": " .. v
+                        end
+
+                        Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                        Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+                    end)
+                end
+
+                function DropElements:Add(newlist)
+                    newlist = newlist or {}
+
+                    for i, v in next, newlist do
+                        local DropItem = Instance.new("TextButton")
+                        local DropItemCorner = Instance.new("UICorner")              
+    
+                        DropItem.Name = v .. "_DropItem"
+                        DropItem.Parent = DropItemHolder
+                        DropItem.BackgroundColor3 = themes.Background
+                        Objects[DropItem] = "Background2"
+                        DropItem.Size = Scale(UDim2.new(0, 420, 0, 30))
+                        DropItem.AutoButtonColor = false
+                        DropItem.Font = Enum.Font.SourceSansSemibold
+                        DropItem.Text = " " .. v
+                        DropItem.TextColor3 = themes.TextColor
+                        Objects[DropItem] = "TextColor"
+                        DropItem.TextSize = ScaleText(21)
+                        DropItem.TextXAlignment = Enum.TextXAlignment.Left
+                        DropItem.ZIndex = 2
+                    
+                        DropItemCorner.CornerRadius = UDim.new(0, Scale(4))
+                        DropItemCorner.Name = "ToggleCorner"
+                        DropItemCorner.Parent = DropItem
+
+                        coroutine.wrap(function()
+                            while wait() do
+                                DropItem.BackgroundColor3 = themes.Background
+                                DropItem.TextColor3 = themes.TextColor
+                            end
+                        end)()
+    
+                        DropItem.MouseButton1Click:Connect(function()
+                            opened = false
+                            Utility:Pop(DropItem, 8)
+                            callback(v)
+
+                            if not search then
+                                TextLabel.Text = droptitle .. ": " .. v
+                            else
+                                DropSearch.Text = droptitle .. ": " .. v
+                            end
+
+                            Dropdown:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+                            Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
+                        end)
+                    end
+                end
+
+                function DropElements:Clear()
+                    for i, v in pairs(DropItemHolder:GetChildren()) do
+                        if v:IsA("TextButton") then
+                            v:Destroy()
+                        end
+                    end
+                end
+
+                return DropElements
+            end -- Final
+
+            return Elements
+        end
+        return Sections
+    end
+    return Tabs
+end
+
+return CFAHub
