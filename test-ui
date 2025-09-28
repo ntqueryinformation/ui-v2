@@ -1752,7 +1752,508 @@ function CFAHub:CreateWindow(title, gameName, intro)
                         Tween:Create(ArrowIcon, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play();
                     end)
                 end
+function Elements:CreateColorPicker(colorPickerTitle, preset, callback)
+    colorPickerTitle = colorPickerTitle or "Color Picker"
+    preset = preset or Color3.new(255, 255, 255)
+    callback = callback or function() end
 
+    local ColorH, ColorS, ColorV = 1, 1, 1
+    local ColorInput = nil
+    local HueInput = nil
+    local rgb = {
+        r = 255,
+        g = 255,
+        b = 255
+    }
+    local allowed = {
+        [""] = true
+    }
+    
+    local function HSVtoRGBFormat(h, s, v)
+        local color = Color3.fromHSV(h, s, v)
+    
+        local rgb = Color3.new(color.R * 255, color.G * 255, color.B * 255)
+    
+        return math.round(rgb.R), math.round(rgb.G), math.round(rgb.B)
+    end
+
+    local r, g, b = HSVtoRGBFormat(preset:ToHSV())
+
+    local ColorPicker = Instance.new("Frame")
+    local ColorPickerCorner = Instance.new("UICorner")
+    local ColorButton = Instance.new("TextButton")
+    local ColorCorner_2 = Instance.new("UICorner")
+    local ColorText = Instance.new("TextLabel")
+    local ButtonPresetColor = Instance.new("Frame")
+    local ColorContainer = Instance.new("Frame")
+    local ColorFrame = Instance.new("ImageLabel")
+    local ColorCorner = Instance.new("UICorner")
+    local ColorSelection = Instance.new("ImageLabel")
+    local PresetColor = Instance.new("Frame")
+    local PresetCorner = Instance.new("UICorner")
+    local Hue = Instance.new("Frame")
+    local HueCorner = Instance.new("UICorner")
+    local HueGradient = Instance.new("UIGradient")
+    local HueSelection = Instance.new("ImageLabel")
+    local Inputs = Instance.new("Frame")
+    local R = Instance.new("Frame")
+    local Text = Instance.new("TextLabel")
+    local RCorner = Instance.new("UICorner")
+    local TextBox = Instance.new("TextBox")
+    local B = Instance.new("Frame")
+    local Text_2 = Instance.new("TextLabel")
+    local BCorner = Instance.new("UICorner")
+    local TextBox_2 = Instance.new("TextBox")
+    local G = Instance.new("Frame")
+    local Text_3 = Instance.new("TextLabel")
+    local GCorner = Instance.new("UICorner")
+    local TextBox_3 = Instance.new("TextBox")
+    local PresetColor = Instance.new("Frame")
+    local PresetCorner_2 = Instance.new("UICorner")
+    local ConfirmButton = Instance.new("TextButton")
+    local ConfirmCorner = Instance.new("UICorner")
+
+    ColorPicker.Name = "ColorPicker"
+    ColorPicker.Parent = SectionFrame
+    ColorPicker.BackgroundColor3 = themes.Drop
+    Objects[ColorPicker] = "Drop"
+    ColorPicker.ClipsDescendants = true
+    ColorPicker.Position = UDim2.new(0.0319148935, 0, 0.68948245, 0)
+    ColorPicker.Size = Scale(UDim2.new(0, 440, 0, 34))
+
+    ColorPickerCorner.CornerRadius = UDim.new(0, Scale(4))
+    ColorPickerCorner.Name = "ColorPickerCorner"
+    ColorPickerCorner.Parent = ColorPicker
+    
+    ColorButton.Name = "ColorButton"
+    ColorButton.Parent = ColorPicker
+    ColorButton.BackgroundColor3 = themes.Background
+    Objects[ColorButton] = "Background"
+    ColorButton.Size = Scale(UDim2.new(0, 440, 0, 34))
+    ColorButton.ZIndex = 3
+    ColorButton.AutoButtonColor = false
+    ColorButton.Font = Enum.Font.SourceSansSemibold
+    ColorButton.Text = ""
+    ColorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ColorButton.TextSize = ScaleText(22)
+    ColorButton.TextWrapped = true
+    ColorButton.TextXAlignment = Enum.TextXAlignment.Left
+    
+    ColorCorner_2.CornerRadius = UDim.new(0, Scale(4))
+    ColorCorner_2.Name = "ColorCorner"
+    ColorCorner_2.Parent = ColorButton
+    
+    ColorText.Name = "ColorText"
+    ColorText.Parent = ColorButton
+    ColorText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ColorText.BackgroundTransparency = 1.000
+    ColorText.Size = Scale(UDim2.new(0, 283, 0, 34))
+    ColorText.ZIndex = 3
+    ColorText.Font = Enum.Font.SourceSansSemibold
+    ColorText.Text = " " .. colorPickerTitle
+    ColorText.TextColor3 = themes.TextColor
+    Objects[ColorText] = "TextColor"
+    ColorText.TextSize = ScaleText(22)
+    ColorText.TextXAlignment = Enum.TextXAlignment.Left
+
+    ButtonPresetColor.Name = "ButtonPresetColor"
+    ButtonPresetColor.Parent = ColorButton
+    ButtonPresetColor.AnchorPoint = Vector2.new(0, 0.5)
+    ButtonPresetColor.Position = UDim2.new(-0.0590909086, Scale(309), 0.5, 0)
+    ButtonPresetColor.Size = Scale(UDim2.new(0, 146, 0, 21))
+    ButtonPresetColor.ZIndex = 2
+
+    PresetCorner.CornerRadius = UDim.new(0, Scale(4))
+    PresetCorner.Name = "PresetCorner"
+    PresetCorner.Parent = ButtonPresetColor
+
+    ColorContainer.Name = "ColorContainer"
+    ColorContainer.Parent = ColorPicker
+    ColorContainer.AnchorPoint = Vector2.new(0, 1)
+    ColorContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ColorContainer.BackgroundTransparency = 1.000
+    ColorContainer.Position = UDim2.new(0, 0, 1, 0)
+    ColorContainer.Size = Scale(UDim2.new(0, 438, 0, 133))
+    
+    ColorFrame.Name = "ColorFrame"
+    ColorFrame.Parent = ColorContainer
+    ColorFrame.Position = UDim2.new(0.023, 0, 0.0559999868, 0)
+    ColorFrame.Size = Scale(UDim2.new(0, 227, 0, 119))
+    ColorFrame.ZIndex = 2
+    ColorFrame.Image = "rbxassetid://4155801252"
+    
+    ColorCorner.CornerRadius = UDim.new(0, Scale(4))
+    ColorCorner.Name = "ColorCorner"
+    ColorCorner.Parent = ColorFrame
+    
+    ColorSelection.Name = "ColorSelection"
+    ColorSelection.Parent = ColorFrame
+    ColorSelection.AnchorPoint = Vector2.new(0.5, 0.5)
+    ColorSelection.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ColorSelection.BackgroundTransparency = 1.000
+    ColorSelection.Size = Scale(UDim2.new(0, 19, 0, 19))
+    ColorSelection.Position = UDim2.new(preset and select(3, Color3.toHSV(preset)))
+    ColorSelection.ZIndex = 2
+    ColorSelection.Image = "rbxassetid://8662218920"
+    ColorSelection.ScaleType = Enum.ScaleType.Fit
+    
+    PresetColor.Name = "PresetColor"
+    PresetColor.Parent = ColorContainer
+    PresetColor.AnchorPoint = Vector2.new(0, 0.5)
+    PresetColor.Position = UDim2.new(-0.0593607314, Scale(309), 0.225563914, 0)
+    PresetColor.Size = Scale(UDim2.new(0, 145, 0, 47))
+    PresetColor.ZIndex = 2
+
+    PresetCorner_2.CornerRadius = UDim.new(0, Scale(4))
+    PresetCorner_2.Name = "PresetCorner"
+    PresetCorner_2.Parent = PresetColor
+    
+    Hue.Name = "Hue"
+    Hue.Parent = ColorContainer
+    Hue.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Hue.Position = UDim2.new(0, Scale(248), 0, Scale(7))
+    Hue.Size = Scale(UDim2.new(0, 25, 0, 119))
+    Hue.ZIndex = 2
+    
+    HueCorner.CornerRadius = UDim.new(0, Scale(4))
+    HueCorner.Name = "HueCorner"
+    HueCorner.Parent = Hue
+    
+    HueGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+        ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 255, 0)),
+        ColorSequenceKeypoint.new(0.33, Color3.fromRGB(0, 255, 0)),
+        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(0.82, Color3.fromRGB(255, 0, 255)),
+        ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 0))
+    }
+    HueGradient.Rotation = -90
+    HueGradient.Name = "HueGradient"
+    HueGradient.Parent = Hue
+    
+    HueSelection.Name = "HueSelection"
+    HueSelection.Parent = Hue
+    HueSelection.AnchorPoint = Vector2.new(0.5, 0.5)
+    HueSelection.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    HueSelection.BackgroundTransparency = 1.000
+    HueSelection.Position = UDim2.new(0.48, 0, 1 - select(1, Color3.toHSV(preset)))
+    HueSelection.Size = Scale(UDim2.new(0, 19, 0, 19))
+    HueSelection.ZIndex = 2
+    HueSelection.Image = "rbxassetid://8662218920"
+    HueSelection.ScaleType = Enum.ScaleType.Fit
+    
+    Inputs.Name = "Inputs"
+    Inputs.Parent = ColorContainer
+    Inputs.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Inputs.BackgroundTransparency = 1.000
+    Inputs.Position = UDim2.new(0, Scale(283), 0, Scale(59))
+    Inputs.Size = Scale(UDim2.new(0, 145, 0, 36))
+    Inputs.ZIndex = 2
+    
+    R.Name = "R"
+    R.Parent = Inputs
+    R.AnchorPoint = Vector2.new(0, 0.5)
+    R.BackgroundColor3 = themes.Background
+    Objects[R] = "Background"
+    R.Position = UDim2.new(0, 0, 0.5, 0)
+    R.Size = Scale(UDim2.new(0, 46, 0, 30))
+    R.ZIndex = 2
+    
+    Text.Name = "Text"
+    Text.Parent = R
+    Text.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Text.BackgroundTransparency = 1.000
+    Text.Position = UDim2.new(0, Scale(2), 0, 0)
+    Text.Size = UDim2.new(0, Scale(12), 1, 0)
+    Text.Font = Enum.Font.SourceSansSemibold
+    Text.Text = "R"
+    Text.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Text.TextSize = ScaleText(20)
+    Text.TextWrapped = true
+    
+    RCorner.CornerRadius = UDim.new(0, Scale(4))
+    RCorner.Name = "RCorner"
+    RCorner.Parent = R
+    
+    TextBox.Name = "Textbox"
+    TextBox.Parent = R
+    TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox.BackgroundTransparency = 1.000
+    TextBox.Position = UDim2.new(0.304347813, 0, 0, 0)
+    TextBox.Size = Scale(UDim2.new(0, 32, 0, 30))
+    TextBox.Font = Enum.Font.SourceSansSemibold
+    TextBox.Text = r
+    TextBox.TextColor3 = themes.TextColor
+    Objects[TextBox] = "TextColor"
+    TextBox.TextSize = ScaleText(20)
+    TextBox.TextWrapped = true
+    
+    B.Name = "B"
+    B.Parent = Inputs
+    B.AnchorPoint = Vector2.new(1, 0.5)
+    B.BackgroundColor3 = themes.Background
+    Objects[B] = "Background"
+    B.Position = UDim2.new(1, 0, 0.5, 0)
+    B.Size = Scale(UDim2.new(0, 46, 0, 30))
+    B.ZIndex = 2
+    
+    Text_2.Name = "Text"
+    Text_2.Parent = B
+    Text_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Text_2.BackgroundTransparency = 1.000
+    Text_2.Position = UDim2.new(0, Scale(2), 0, 0)
+    Text_2.Size = UDim2.new(0, Scale(12), 1, 0)
+    Text_2.Font = Enum.Font.SourceSansSemibold
+    Text_2.Text = "B"
+    Text_2.TextColor3 = Color3.fromRGB(0, 0, 255)
+    Text_2.TextSize = ScaleText(20)
+    Text_2.TextWrapped = true
+    
+    BCorner.CornerRadius = UDim.new(0, Scale(4))
+    BCorner.Name = "BCorner"
+    BCorner.Parent = B
+    
+    TextBox_2.Name = "Textbox"
+    TextBox_2.Parent = B
+    TextBox_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox_2.BackgroundTransparency = 1.000
+    TextBox_2.Position = UDim2.new(0.304347813, 0, 0, 0)
+    TextBox_2.Size = Scale(UDim2.new(0, 32, 0, 30))
+    TextBox_2.Font = Enum.Font.SourceSansSemibold
+    TextBox_2.Text = b
+    TextBox_2.TextColor3 = themes.TextColor
+    Objects[TextBox_2] = "TextColor"
+    TextBox_2.TextSize = ScaleText(20)
+    TextBox_2.TextWrapped = true
+    
+    G.Name = "G"
+    G.Parent = Inputs
+    G.AnchorPoint = Vector2.new(0.5, 0.5)
+    G.BackgroundColor3 = themes.Background
+    Objects[G] = "Background"
+    G.Position = UDim2.new(0.5, 0, 0.5, 0)
+    G.Size = Scale(UDim2.new(0, 46, 0, 30))
+    G.ZIndex = 2
+    
+    Text_3.Name = "Text"
+    Text_3.Parent = G
+    Text_3.AnchorPoint = Vector2.new(0, 0.5)
+    Text_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Text_3.BackgroundTransparency = 1.000
+    Text_3.Position = UDim2.new(0, Scale(2), 0.5, 0)
+    Text_3.Size = UDim2.new(0, Scale(12), 1, 0)
+    Text_3.Font = Enum.Font.SourceSansSemibold
+    Text_3.Text = "G"
+    Text_3.TextColor3 = Color3.fromRGB(0, 255, 0)
+    Text_3.TextSize = ScaleText(20)
+    Text_3.TextWrapped = true
+    
+    GCorner.CornerRadius = UDim.new(0, Scale(4))
+    GCorner.Name = "GCorner"
+    GCorner.Parent = G
+    
+    TextBox_3.Name = "Textbox"
+    TextBox_3.Parent = G
+    TextBox_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextBox_3.BackgroundTransparency = 1.000
+    TextBox_3.Position = UDim2.new(0.304347813, 0, 0, 0)
+    TextBox_3.Size = Scale(UDim2.new(0, 32, 0, 30))
+    TextBox_3.Font = Enum.Font.SourceSansSemibold
+    TextBox_3.Text = g
+    TextBox_3.TextColor3 = themes.TextColor
+    Objects[TextBox_3] = "TextColor"
+    TextBox_3.TextSize = ScaleText(20)
+    TextBox_3.TextWrapped = true
+    
+    ConfirmButton.Name = "ConfirmButton"
+    ConfirmButton.Parent = ColorContainer
+    ConfirmButton.BackgroundColor3 = themes.SchemaColor
+    Objects[ConfirmButton] = "SchemaColor"
+    ConfirmButton.Position = UDim2.new(0.646118701, 0, 0.744360924, 0)
+    ConfirmButton.Size = Scale(UDim2.new(0, 145, 0, 27))
+    ConfirmButton.Font = Enum.Font.SourceSansBold
+    ConfirmButton.Text = "Confirm"
+    ConfirmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ConfirmButton.TextSize = ScaleText(22)
+
+    Animate:CreateGradient(ConfirmButton)
+    
+    ConfirmCorner.CornerRadius = UDim.new(0, Scale(4))
+    ConfirmCorner.Name = "ConfirmCorner"
+    ConfirmCorner.Parent = ConfirmButton
+
+    coroutine.wrap(function()
+        while wait() do
+            ColorPicker.BackgroundColor3 = themes.Drop
+            ColorButton.BackgroundColor3 = themes.Background
+            ColorText.TextColor3 = themes.TextColor
+            R.BackgroundColor3 = themes.Background
+            TextBox.TextColor3 = themes.TextColor
+            B.BackgroundColor3 = themes.Background
+            TextBox_2.TextColor3 = themes.TextColor
+            G.BackgroundColor3 = themes.Background
+            TextBox_3.TextColor3 = themes.TextColor
+            ConfirmButton.BackgroundColor3 = themes.SchemaColor
+        end
+    end)()
+
+    local function UpdateColorPicker()
+        PresetColor.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
+        ColorFrame.BackgroundColor3 = Color3.fromHSV(ColorH, 1, 1)
+        ButtonPresetColor.BackgroundColor3 = Color3.fromHSV(ColorH, ColorS, ColorV)
+
+        Utility:TweenObject(HueSelection, {Position = UDim2.new(0.48, 0, 1 - ColorH)}, 0.25)
+        Utility:TweenObject(ColorSelection, {Position = UDim2.new(ColorS, 0, 1 - ColorV)}, 0.25)
+
+        local color = Color3.fromHSV(ColorH, ColorS, ColorV)
+
+        local r, g, b = HSVtoRGBFormat(color:ToHSV())
+
+        TextBox.Text = r
+        TextBox_3.Text = g
+        TextBox_2.Text = b
+
+        pcall(callback, PresetColor.BackgroundColor3)
+    end
+
+    for i, container in pairs(Inputs:GetChildren()) do
+        if container:IsA("Frame") then
+            local textbox = container.Textbox
+            local focused
+
+            textbox.Focused:Connect(function()
+                focused = true
+            end)
+
+            textbox.FocusLost:Connect(function()
+                focused = false
+
+                if not tonumber(textbox.Text) then
+                    textbox.Text = math.floor(rgb[container.Name:lower()])
+                end
+            end)
+
+            textbox:GetPropertyChangedSignal("Text"):Connect(function()
+                local text = textbox.Text
+
+                if not allowed[text] and not tonumber(text) then
+                    text = text:sub(1, #text - 1)
+                elseif focused and not allowed[text] then
+                    rgb[container.Name:lower()] = math.clamp(tonumber(textbox.Text), 0, 255)
+
+                    local color3 = Color3.fromRGB(rgb.r, rgb.g, rgb.b)
+                    ColorH, ColorS, ColorV = Color3.toHSV(color3)
+
+                    UpdateColorPicker()
+                    pcall(callback, color3)
+                end
+            end)
+        end
+    end
+
+    local ColorDrop = false
+
+    ConfirmButton.MouseButton1Click:Connect(function()
+        ColorPicker:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+        ColorDrop = not ColorDrop
+    end)
+
+    ColorButton.MouseButton1Click:Connect(function()
+        if ColorDrop then
+            ColorPicker:TweenSize(Scale(UDim2.new(0, 440, 0, 34)), "Out", "Quad", 0.5, true)
+        else
+            ColorPicker:TweenSize(Scale(UDim2.new(0, 440, 0, 170)), "Out", "Quad", 0.5, true)
+        end
+        ColorDrop = not ColorDrop
+    end)
+
+    ColorH =
+        1 -
+        (math.clamp(HueSelection.AbsolutePosition.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
+            Hue.AbsoluteSize.Y)
+    ColorS =
+        (math.clamp(ColorSelection.AbsolutePosition.X - ColorFrame.AbsolutePosition.X, 0, ColorFrame.AbsoluteSize.X) /
+        ColorFrame.AbsoluteSize.X)
+    ColorV =
+        1 -
+        (math.clamp(ColorSelection.AbsolutePosition.Y - ColorFrame.AbsolutePosition.Y, 0, ColorFrame.AbsoluteSize.Y) /
+        ColorFrame.AbsoluteSize.Y)
+
+
+    PresetColor.BackgroundColor3 = preset
+    ColorFrame.BackgroundColor3 = preset
+    ButtonPresetColor.BackgroundColor3 = preset
+    pcall(callback, PresetColor.BackgroundColor3)
+
+    ColorFrame.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or
+               input.UserInputType == Enum.UserInputType.Touch then
+                if ColorInput then
+                    ColorInput:Disconnect()
+                end
+
+                ColorInput = Run.RenderStepped:Connect(function()
+                    local ColorX = 
+                            (math.clamp(ms.X - ColorFrame.AbsolutePosition.X, 0, ColorFrame.AbsoluteSize.X) /
+                                ColorFrame.AbsoluteSize.X)
+                    local ColorY = 
+                            (math.clamp(ms.Y - ColorFrame.AbsolutePosition.Y, 0, ColorFrame.AbsoluteSize.Y) /
+                                ColorFrame.AbsoluteSize.Y)
+
+                    Tween:Create(ColorSelection, Tweeninfo(0.5), {
+                        Position = UDim2.new(ColorX, 0, ColorY, 0)
+                    }):Play()
+                    ColorS = ColorX
+                    ColorV = 1 - ColorY
+                    UpdateColorPicker()
+                end)
+            end
+        
+        end)
+    ColorFrame.InputEnded:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or
+               input.UserInputType == Enum.UserInputType.Touch then
+                if ColorInput then
+                    ColorInput:Disconnect()
+                end
+            end
+        end)
+
+    Hue.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or
+               input.UserInputType == Enum.UserInputType.Touch then
+                if HueInput then
+                    HueInput:Disconnect()
+                end
+
+                HueInput = Run.RenderStepped:Connect(function()
+                    local HueY = 
+                        (math.clamp(ms.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
+                            Hue.AbsoluteSize.Y)
+
+                    Tween:Create(HueSelection, Tweeninfo(0.5), {
+                        Position = UDim2.new(0.48, 0, HueY, 0)
+                    }):Play()
+                    ColorH = 1 - HueY
+                    UpdateColorPicker()
+                end)
+            end
+        end)
+
+    Hue.InputEnded:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or
+               input.UserInputType == Enum.UserInputType.Touch then
+                if HueInput then
+                    HueInput:Disconnect()
+                end
+            end
+        end)
+end -- Final
                 function DropElements:Add(newlist)
                     newlist = newlist or {}
 
