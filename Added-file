@@ -1507,26 +1507,28 @@ function CFAHub:CreateWindow(title, gameName, intro)
 					pcall(callback, value)
 				end
 
-                SliderDrag.InputBegan:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-						dragging = true
-                        Utility:TweenObject(SilderNumber, {TextTransparency = 0}, 0.5)
-					end
-				end)
+SliderDrag.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+       input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        Utility:TweenObject(SilderNumber, {TextTransparency = 0}, 0.5)
+    end
+end)
 
-				SliderDrag.InputEnded:Connect(function(input)
-					if input.UserInputType == Enum.UserInputType.MouseButton1 then
-					    dragging = false
-                        Utility:TweenObject(SilderNumber, {TextTransparency = 1}, 0.5)
-					end
-				end)
+SliderDrag.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+       input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+        Utility:TweenObject(SilderNumber, {TextTransparency = 1}, 0.5)
+    end
+end)
 
-                Input.InputChanged:Connect(function(input)
-                    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-						move(input)
-					end
-                end)
-
+Input.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
+                     input.UserInputType == Enum.UserInputType.Touch) then
+        move(input)
+    end
+end)
                 local SliderElements = {}
 
                 function SliderElements:Change(tochange)
